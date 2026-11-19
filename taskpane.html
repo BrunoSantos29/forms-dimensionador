@@ -71,7 +71,7 @@ main{padding:14px}
   </div>
 
   <button type="button" class="btn pri" id="bAll" disabled>Rodar todos os testes</button>
-  <div class="ft">Versão de teste 1.0.0 · Forms Dimensionador</div>
+  <div class="ft">Versão de teste 1.0.2 · Forms Dimensionador</div>
 </main>
 
 <script>
@@ -79,6 +79,10 @@ const $=id=>document.getElementById(id);
 const pill=(id,cls,txt)=>{const e=$(id);e.className='pl '+cls;e.textContent=txt;};
 const out=(id,txt,err)=>{const e=$(id);e.textContent=txt;e.className='res'+(err?' err':'');};
 const agora=()=>new Date().toLocaleString('pt-BR');
+
+function comPrazo(promessa,seg){
+  return Promise.race([promessa,new Promise((_,rej)=>setTimeout(()=>rej({code:'SemResposta',message:'O Excel não respondeu em '+seg+' segundos. Provável falta de permissão de leitura e gravação no manifesto.'}),seg*1000))]);
+}
 
 function maiorApi(){
   let v='1.1';
@@ -89,7 +93,7 @@ function maiorApi(){
 async function testeLeitura(){
   pill('p2','atn','Testando');
   try{
-    await Excel.run(async ctx=>{
+    await comPrazo(Excel.run(async ctx=>{
       const abas=ctx.workbook.worksheets; abas.load('items/name');
       const tabs=ctx.workbook.tables; tabs.load('items/name');
       const sel=ctx.workbook.getSelectedRange(); sel.load('address');
@@ -99,7 +103,7 @@ async function testeLeitura(){
       await ctx.sync();
       const tt=tabs.items.map((t,i)=>`${t.name} (${linhas[i].rowCount} linhas)`).join(', ')||'nenhuma';
       out('r2',`Abas: ${abas.items.map(a=>a.name).join(', ')}\nTabelas: ${tt}\nSeleção atual: ${sel.address}`);
-    });
+    }),15);
     pill('p2','pos','OK'); return true;
   }catch(e){ pill('p2','neg','Falhou'); out('r2',erroTxt(e),true); return false; }
 }
@@ -107,7 +111,7 @@ async function testeLeitura(){
 async function testeGravacao(){
   pill('p3','atn','Testando');
   try{
-    await Excel.run(async ctx=>{
+    await comPrazo(Excel.run(async ctx=>{
       let ws=ctx.workbook.worksheets.getItemOrNullObject('Teste_Suplemento');
       await ctx.sync();
       if(ws.isNullObject){ ws=ctx.workbook.worksheets.add('Teste_Suplemento'); }
@@ -115,7 +119,7 @@ async function testeGravacao(){
       ws.getRange('A1:B1').format.font.bold=true;
       ws.getRange('A:B').format.autofitColumns();
       await ctx.sync();
-    });
+    }),15);
     pill('p3','pos','OK'); out('r3','Gravado em Teste_Suplemento!A1:B2 às '+agora()+'.'); return true;
   }catch(e){ pill('p3','neg','Falhou'); out('r3',erroTxt(e),true); return false; }
 }
