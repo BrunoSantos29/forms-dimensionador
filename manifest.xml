@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Forms Dimensionador: manifesto de teste (sem guia própria, abre pelo menu Suplementos).
+     Painel hospedado no GitHub Pages: https://brunosantos29.github.io/forms-dimensionador -->
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:type="TaskPaneApp">
+  <Id>104f2583-dd05-4f49-b3e9-4de5a01ce6cd</Id>
+  <Version>1.0.1.0</Version>
+  <ProviderName>Bruno Santos</ProviderName>
+  <DefaultLocale>pt-BR</DefaultLocale>
+  <DisplayName DefaultValue="Forms Dimensionador"/>
+  <Description DefaultValue="Formulário para consultar e atualizar registros de uma tabela do Excel. Versão de teste."/>
+  <IconUrl DefaultValue="https://brunosantos29.github.io/forms-dimensionador/assets/icon-32.png"/>
+  <HighResolutionIconUrl DefaultValue="https://brunosantos29.github.io/forms-dimensionador/assets/icon-64.png"/>
+  <SupportUrl DefaultValue="https://brunosantos29.github.io/forms-dimensionador/taskpane.html"/>
+  <AppDomains>
+    <AppDomain>https://brunosantos29.github.io</AppDomain>
+  </AppDomains>
+  <Hosts>
+    <Host Name="Workbook"/>
+  </Hosts>
+  <Requirements>
+    <Sets DefaultMinVersion="1.1">
+      <Set Name="ExcelApi" MinVersion="1.1"/>
+    </Sets>
+  </Requirements>
+  <DefaultSettings>
+    <SourceLocation DefaultValue="https://brunosantos29.github.io/forms-dimensionador/taskpane.html"/>
+  </DefaultSettings>
+  <Permissions>ReadWriteDocument</Permissions>
+</OfficeApp>

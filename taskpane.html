@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Forms Dimensionador</title>
+<script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+<style>
+:root{--verde:#047E7D;--verdeEsc:#033E3D;--dourado:#EDB111;--txt:#1F2A2A;--suave:#5F6B6B;--borda:#E2E8E8}
+*{box-sizing:border-box}
+body{margin:0;background:#F4F6F6;color:var(--txt);font:13.3px "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
+.hd{height:52px;background:var(--verde);color:#fff;display:flex;align-items:center;gap:10px;padding:0 14px}
+.hd b{font-size:14.5px}
+.logo{border:1.5px dashed rgba(255,255,255,.75);border-radius:4px;font-size:9.5px;padding:3px 6px;white-space:nowrap}
+.dv{width:1px;height:24px;background:rgba(255,255,255,.4)}
+.strip{height:4px;background:linear-gradient(90deg,var(--verdeEsc) 78%,var(--dourado) 78%)}
+main{padding:14px}
+.bc{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--suave);font-weight:700;margin-bottom:10px}
+.sc{background:#fff;border:1px solid var(--borda);border-radius:12px;padding:12px 14px;margin-bottom:12px}
+.sc h3{font-size:14px;margin:0 0 6px;color:var(--verdeEsc);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.sc p{margin:0;font-size:12.5px;color:#444E4E;line-height:1.45}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;margin-top:6px}
+.kv small{display:block;font-size:11px;color:var(--suave);font-weight:600}
+.kv span{font-size:13px;word-break:break-word}
+.pl{display:inline-flex;align-items:center;border-radius:999px;padding:2px 9px;font-size:11px;font-weight:600;white-space:nowrap}
+.pos{background:#E0F2F1;color:#00605D}.atn{background:#FDF4D8;color:#7A5700}.neg{background:#FCE8E6;color:#B3261E}.neu{background:#F1F3F3;color:#444E4E}
+.btn{width:100%;height:40px;border-radius:8px;border:0;font:inherit;font-size:13px;font-weight:600;cursor:pointer;margin-top:10px}
+.pri{background:var(--verde);color:#fff}
+.out{background:#fff;color:var(--verde);border:1.5px solid var(--verde)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.res{margin-top:8px;font-size:12px;line-height:1.45;color:#444E4E;white-space:pre-wrap;word-break:break-word}
+.res.err{color:#B3261E}
+.ft{font-size:11px;color:var(--suave);text-align:center;padding:4px 0 16px}
+</style>
+</head>
+<body>
+<div class="hd"><span class="logo">logo_vale_branca</span><span class="dv"></span><b>Forms Dimensionador</b></div>
+<div class="strip"></div>
+<main>
+  <div class="bc">Teste de instalação</div>
+
+  <div class="sc">
+    <h3>1. Conexão com o Excel <span id="p1" class="pl neu">Aguardando</span></h3>
+    <div class="kv">
+      <div><small>Aplicativo</small><span id="host">·</span></div>
+      <div><small>Plataforma</small><span id="plat">·</span></div>
+      <div><small>Versão do Office</small><span id="ver">·</span></div>
+      <div><small>API do Excel</small><span id="api">·</span></div>
+    </div>
+  </div>
+
+  <div class="sc">
+    <h3>2. Leitura <span id="p2" class="pl neu">Não testado</span></h3>
+    <p>Lê o nome das abas, as tabelas do arquivo e a seleção atual.</p>
+    <button type="button" class="btn out" id="b2" disabled>Testar leitura</button>
+    <div class="res" id="r2"></div>
+  </div>
+
+  <div class="sc">
+    <h3>3. Gravação <span id="p3" class="pl neu">Não testado</span></h3>
+    <p>Cria a aba <b>Teste_Suplemento</b> e grava data e hora nela. Não mexe nos seus dados.</p>
+    <button type="button" class="btn out" id="b3" disabled>Testar gravação</button>
+    <div class="res" id="r3"></div>
+  </div>
+
+  <div class="sc">
+    <h3>4. Configuração no arquivo <span id="p4" class="pl neu">Não testado</span></h3>
+    <p>Salva uma configuração de teste dentro do arquivo e lê de volta. É onde o formulário vai guardar os campos escolhidos.</p>
+    <button type="button" class="btn out" id="b4" disabled>Testar configuração</button>
+    <div class="res" id="r4"></div>
+  </div>
+
+  <button type="button" class="btn pri" id="bAll" disabled>Rodar todos os testes</button>
+  <div class="ft">Versão de teste 1.0.0 · Forms Dimensionador</div>
+</main>
+
+<script>
+const $=id=>document.getElementById(id);
+const pill=(id,cls,txt)=>{const e=$(id);e.className='pl '+cls;e.textContent=txt;};
+const out=(id,txt,err)=>{const e=$(id);e.textContent=txt;e.className='res'+(err?' err':'');};
+const agora=()=>new Date().toLocaleString('pt-BR');
+
+function maiorApi(){
+  let v='1.1';
+  for(let i=2;i<=20;i++){ if(Office.context.requirements.isSetSupported('ExcelApi','1.'+i)) v='1.'+i; else break; }
+  return v;
+}
+
+async function testeLeitura(){
+  pill('p2','atn','Testando');
+  try{
+    await Excel.run(async ctx=>{
+      const abas=ctx.workbook.worksheets; abas.load('items/name');
+      const tabs=ctx.workbook.tables; tabs.load('items/name');
+      const sel=ctx.workbook.getSelectedRange(); sel.load('address');
+      await ctx.sync();
+      const linhas=[];
+      for(const t of tabs.items){ const r=t.getDataBodyRange(); r.load('rowCount'); linhas.push(r); }
+      await ctx.sync();
+      const tt=tabs.items.map((t,i)=>`${t.name} (${linhas[i].rowCount} linhas)`).join(', ')||'nenhuma';
+      out('r2',`Abas: ${abas.items.map(a=>a.name).join(', ')}\nTabelas: ${tt}\nSeleção atual: ${sel.address}`);
+    });
+    pill('p2','pos','OK'); return true;
+  }catch(e){ pill('p2','neg','Falhou'); out('r2',erroTxt(e),true); return false; }
+}
+
+async function testeGravacao(){
+  pill('p3','atn','Testando');
+  try{
+    await Excel.run(async ctx=>{
+      let ws=ctx.workbook.worksheets.getItemOrNullObject('Teste_Suplemento');
+      await ctx.sync();
+      if(ws.isNullObject){ ws=ctx.workbook.worksheets.add('Teste_Suplemento'); }
+      ws.getRange('A1:B2').values=[['Teste','Resultado'],['Gravação pelo Forms Dimensionador',agora()]];
+      ws.getRange('A1:B1').format.font.bold=true;
+      ws.getRange('A:B').format.autofitColumns();
+      await ctx.sync();
+    });
+    pill('p3','pos','OK'); out('r3','Gravado em Teste_Suplemento!A1:B2 às '+agora()+'.'); return true;
+  }catch(e){ pill('p3','neg','Falhou'); out('r3',erroTxt(e),true); return false; }
+}
+
+function testeConfig(){
+  pill('p4','atn','Testando');
+  return new Promise(res=>{
+    try{
+      const cfg={versao:1,teste:true,salvoEm:agora()};
+      Office.context.document.settings.set('formsDimensionador_teste',cfg);
+      Office.context.document.settings.saveAsync(r=>{
+        if(r.status===Office.AsyncResultStatus.Succeeded){
+          const lido=Office.context.document.settings.get('formsDimensionador_teste');
+          pill('p4','pos','OK'); out('r4','Salvo e lido de volta: '+JSON.stringify(lido)); res(true);
+        }else{ pill('p4','neg','Falhou'); out('r4',erroTxt(r.error),true); res(false); }
+      });
+    }catch(e){ pill('p4','neg','Falhou'); out('r4',erroTxt(e),true); res(false); }
+  });
+}
+
+function erroTxt(e){
+  if(!e) return 'Erro desconhecido.';
+  const cod=e.code||e.name||'';
+  return `Erro${cod?' ('+cod+')':''}: ${e.message||e}\nTire um print desta mensagem para mandar à TI.`;
+}
+
+Office.onReady(info=>{
+  if(info.host!==Office.HostType.Excel){ pill('p1','neg','Fora do Excel'); $('host').textContent=info.host||'desconhecido'; return; }
+  $('host').textContent='Excel';
+  $('plat').textContent={PC:'Windows (desktop)',OfficeOnline:'Navegador (web/Teams)',Mac:'Mac',iOS:'iPad'}[info.platform]||info.platform;
+  try{ $('ver').textContent=Office.context.diagnostics.version; }catch(e){ $('ver').textContent='·'; }
+  $('api').textContent='ExcelApi '+maiorApi();
+  pill('p1','pos','OK');
+  ['b2','b3','b4','bAll'].forEach(id=>$(id).disabled=false);
+  $('b2').onclick=testeLeitura;
+  $('b3').onclick=testeGravacao;
+  $('b4').onclick=testeConfig;
+  $('bAll').onclick=async()=>{await testeLeitura();await testeGravacao();await testeConfig();};
+});
+
+setTimeout(()=>{ if(!window.Office||$('p1').textContent==='Aguardando'){ pill('p1','neg','Sem conexão'); $('host').textContent='Office.js não carregou. A rede pode estar bloqueando appsforoffice.microsoft.com.'; } },8000);
+</script>
+</body>
+</html>
