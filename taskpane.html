@@ -6,161 +6,713 @@
 <title>Forms Dimensionador</title>
 <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
 <style>
-:root{--verde:#047E7D;--verdeEsc:#033E3D;--dourado:#EDB111;--txt:#1F2A2A;--suave:#5F6B6B;--borda:#E2E8E8}
+:root{--verde:#047E7D;--verdeEsc:#033E3D;--dourado:#EDB111;--txt:#1F2A2A;--suave:#5F6B6B;--borda:#E2E8E8;--campo:#B0BABA}
 *{box-sizing:border-box}
-body{margin:0;background:#F4F6F6;color:var(--txt);font:13.3px "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
-.hd{height:52px;background:var(--verde);color:#fff;display:flex;align-items:center;gap:10px;padding:0 14px}
-.hd b{font-size:14.5px}
+html,body{margin:0;height:100%}
+body{background:#F4F6F6;color:var(--txt);font:13.3px "Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
+button{font-family:inherit}
+.p{height:100vh;display:flex;flex-direction:column;position:relative}
+.p-hd{flex:none;height:52px;background:var(--verde);color:#fff;display:flex;align-items:center;gap:10px;padding:0 14px}
+.p-hd b{font-size:14.5px;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .logo{border:1.5px dashed rgba(255,255,255,.75);border-radius:4px;font-size:9.5px;padding:3px 6px;white-space:nowrap}
 .dv{width:1px;height:24px;background:rgba(255,255,255,.4)}
-.strip{height:4px;background:linear-gradient(90deg,var(--verdeEsc) 78%,var(--dourado) 78%)}
-main{padding:14px}
-.bc{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--suave);font-weight:700;margin-bottom:10px}
+.hb{background:none;border:0;color:#fff;cursor:pointer;width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center}
+.hb:hover{background:rgba(255,255,255,.15)}
+.p-strip{height:4px;flex:none;background:linear-gradient(90deg,var(--verdeEsc) 78%,var(--dourado) 78%)}
+.p-body{flex:1;overflow:auto;padding:14px}
+.p-bc{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--suave);font-weight:700;margin-bottom:10px}
+.p-ft{flex:none;background:#fff;border-top:1px solid var(--borda);padding:10px 14px;display:flex;flex-direction:column;gap:8px}
+.row{display:flex;gap:8px}
+.btn{height:40px;border-radius:8px;border:0;font-size:13px;font-weight:600;padding:0 14px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.b-pri{background:var(--verde);color:#fff}
+.b-sec{background:#E1E1E1;color:#1F2A2A}
+.b-out{background:#fff;color:var(--verde);border:1.5px solid var(--verde)}
+.b-gold{background:var(--dourado);color:#1F2A2A}
+.b-neg{background:#B3261E;color:#fff}
+.f1{flex:1}.f2{flex:2}.w100{width:100%}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
 .sc{background:#fff;border:1px solid var(--borda);border-radius:12px;padding:12px 14px;margin-bottom:12px}
-.sc h3{font-size:14px;margin:0 0 6px;color:var(--verdeEsc);display:flex;justify-content:space-between;align-items:center;gap:8px}
-.sc p{margin:0;font-size:12.5px;color:#444E4E;line-height:1.45}
-.kv{display:grid;grid-template-columns:1fr 1fr;gap:8px 12px;margin-top:6px}
-.kv small{display:block;font-size:11px;color:var(--suave);font-weight:600}
+.sc h3{font-size:14px;margin:0 0 6px;color:var(--verdeEsc);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.shint{font-size:11.5px;color:var(--suave);margin:-2px 0 4px}
+.lb{display:block;font-size:11.3px;font-weight:600;color:var(--suave);margin:10px 0 4px}
+.in{width:100%;height:36px;border:1px solid var(--campo);border-radius:8px;padding:0 10px;font:inherit;font-size:13px;background:#fff;color:#1F2A2A}
+textarea.in{height:70px;padding:8px 10px;resize:vertical}
+select.in{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23033E3D' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:30px}
+.in.err{border:2px solid #B3261E}
+.in.chg{border-color:var(--dourado);box-shadow:0 0 0 1px var(--dourado)}
+.in:disabled{background:#F1F3F3;color:var(--suave)}
+.hint{font-size:11.5px;font-style:italic;color:var(--suave);margin-top:5px;line-height:1.4}
+.emsg{font-size:11.5px;color:#B3261E;margin-top:4px;font-weight:600}
+.al{display:flex;gap:8px;border-radius:8px;padding:10px 12px;font-size:12.5px;margin-bottom:12px;align-items:flex-start;line-height:1.4}
+.al svg{flex:none;margin-top:1px}
+.al.neg{background:#FCE8E6;color:#B3261E}.al.atn{background:#FDF4D8;color:#7A5700}.al.pos{background:#E0F2F1;color:#00605D}.al.neu{background:#F1F3F3;color:#444E4E}
+.al .row{margin-top:8px}
+.al .btn{height:32px;font-size:12px;padding:0 10px}
+.pl{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:2px 9px;font-size:11px;font-weight:600;white-space:nowrap}
+.pl.pos{background:#E0F2F1;color:#00605D}.pl.atn{background:#FDF4D8;color:#7A5700}.pl.neu{background:#F1F3F3;color:#444E4E}.pl.neg{background:#FCE8E6;color:#B3261E}.pl.forte{background:var(--verde);color:#fff}
+.kv{display:grid;grid-template-columns:1fr 1fr;gap:10px 12px}
+.kv small{display:block;font-size:11px;color:var(--suave);font-weight:600;margin-bottom:1px}
 .kv span{font-size:13px;word-break:break-word}
-.pl{display:inline-flex;align-items:center;border-radius:999px;padding:2px 9px;font-size:11px;font-weight:600;white-space:nowrap}
-.pos{background:#E0F2F1;color:#00605D}.atn{background:#FDF4D8;color:#7A5700}.neg{background:#FCE8E6;color:#B3261E}.neu{background:#F1F3F3;color:#444E4E}
-.btn{width:100%;height:40px;border-radius:8px;border:0;font:inherit;font-size:13px;font-weight:600;cursor:pointer;margin-top:10px}
-.pri{background:var(--verde);color:#fff}
-.out{background:#fff;color:var(--verde);border:1.5px solid var(--verde)}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.res{margin-top:8px;font-size:12px;line-height:1.45;color:#444E4E;white-space:pre-wrap;word-break:break-word}
-.res.err{color:#B3261E}
-.ft{font-size:11px;color:var(--suave);text-align:center;padding:4px 0 16px}
+.kv .full{grid-column:1/-1}
+.seg{display:flex;border:1px solid var(--campo);border-radius:8px;overflow:hidden;background:#fff}
+.seg button{flex:1;height:32px;border:0;background:#fff;font-size:12.5px;cursor:pointer;color:#1F2A2A;border-right:1px solid var(--borda)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed=true]{background:var(--verde);color:#fff;font-weight:600}
+.seg button:disabled{color:#B0BABA;cursor:not-allowed;background:#F7F8F8}
+.sw{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;cursor:pointer;border:0;background:none;padding:0;color:#1F2A2A;white-space:nowrap}
+.sw i{width:34px;height:20px;border-radius:999px;background:var(--campo);position:relative;flex:none}
+.sw i::after{content:'';position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:left .15s}
+.sw[aria-pressed=true] i{background:var(--verde)}
+.sw[aria-pressed=true] i::after{left:16px}
+.sw:disabled{opacity:.5;cursor:not-allowed}
+.st{display:flex;align-items:flex-start;margin:2px 0 14px}
+.st .s{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative;font-size:11px;color:var(--suave);text-align:center}
+.st .s::before{content:'';position:absolute;top:13px;left:-50%;width:100%;height:2px;background:var(--borda)}
+.st .s:first-child::before{display:none}
+.st .s.ok::before,.st .s.cur::before{background:var(--verde)}
+.st .c{width:28px;height:28px;border-radius:50%;background:#fff;border:2px solid var(--campo);display:flex;align-items:center;justify-content:center;font-weight:700;position:relative;z-index:1;font-size:12px}
+.st .ok .c{background:var(--verde);border-color:var(--verde);color:#fff}
+.st .cur .c{background:var(--verde);border-color:var(--dourado);color:#fff;box-shadow:0 0 0 4px rgba(237,177,17,.28)}
+.st .cur{color:var(--verdeEsc);font-weight:700}
+.rc{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--borda);border-radius:10px;padding:10px 12px;margin-bottom:8px;cursor:pointer;background:#fff;width:100%;text-align:left;color:#1F2A2A}
+.rc[aria-pressed=true]{border-color:var(--verde);background:#F0F9F8;box-shadow:inset 0 0 0 1px var(--verde)}
+.rc i{width:16px;height:16px;border-radius:50%;border:2px solid var(--campo);flex:none;margin-top:2px}
+.rc[aria-pressed=true] i{border:5px solid var(--verde)}
+.rc b{display:block;font-size:13px}
+.rc small{color:var(--suave);font-size:11.5px;line-height:1.35}
+.rc:disabled{opacity:.55;cursor:not-allowed}
+.ib{width:36px;height:36px;border-radius:8px;border:1px solid var(--campo);background:#fff;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;color:var(--verdeEsc);flex:none}
+.ib:disabled{opacity:.4;cursor:not-allowed}
+.lnk{background:none;border:0;color:var(--verde);font-weight:600;font-size:12px;cursor:pointer;padding:0;display:inline-flex;gap:4px;align-items:center}
+.srch{position:relative}
+.srch svg{position:absolute;left:10px;top:9px}
+.srch .in{padding-left:34px}
+.nav{display:flex;align-items:center;gap:8px;margin-top:10px}
+.rec{flex:1;text-align:center;font-size:12px;color:var(--suave);line-height:1.3;min-width:0}
+.rec b{display:block;font-size:14px;color:var(--verdeEsc);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+.fg .full{grid-column:1/-1}
+.fx{font-size:10px;font-style:italic;color:#7A5700;background:#FDF4D8;border-radius:4px;padding:0 4px;margin-left:4px}
+.fst{display:flex;justify-content:center}
+.hero{background:var(--verde);color:#fff;border-radius:12px;padding:16px;margin-bottom:12px;position:relative;overflow:hidden}
+.hero .crv{position:absolute;inset:0;width:100%;height:100%}
+.hero>*{position:relative}
+.eb{font-size:10.5px;letter-spacing:.1em;font-weight:700;color:var(--dourado)}
+.hero h2{font-size:22px;margin:6px 0 8px}
+.hero .ln{width:36px;height:3px;background:var(--dourado);border-radius:2px;margin-bottom:8px}
+.hero p{margin:0;font-size:12.5px;line-height:1.45;opacity:.95}
+.steps{list-style:none;margin:0;padding:0}
+.steps li{display:flex;gap:10px;align-items:flex-start;font-size:12.5px;line-height:1.4;padding:6px 0}
+.steps li b{width:22px;height:22px;border-radius:50%;background:#E0F2F1;color:var(--verdeEsc);display:flex;align-items:center;justify-content:center;font-size:11.5px;flex:none}
+.empty{text-align:center;padding:22px 10px 12px}
+.empty h3{font-size:15px;color:var(--verdeEsc);margin:10px 0 6px;display:block}
+.empty p{font-size:12.5px;color:var(--suave);margin:0;line-height:1.45}
+.intro{font-size:12.5px;line-height:1.45;margin:0 0 10px;color:#444E4E}
+.fl{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.fl button{border:1px solid var(--borda);background:#fff;border-radius:999px;padding:4px 10px;font-size:11.5px;cursor:pointer;color:#1F2A2A}
+.fl button[aria-pressed=true]{background:var(--verdeEsc);border-color:var(--verdeEsc);color:#fff}
+.cc{background:#fff;border:1px solid var(--borda);border-left:4px solid #8C9898;border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.cc.m-edit{border-left-color:var(--verde)}
+.cc.m-oculta{border-left-color:#D5DBDB;background:#F9FAFA}
+.cc.m-oculta .cc-nm{color:#8C9898}
+.cc-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.let{min-width:26px;height:26px;padding:0 4px;border-radius:6px;background:#F1F3F3;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:var(--verdeEsc);flex:none}
+.cc-nm{flex:1;min-width:0;font-weight:600;word-break:break-word}
+.cc-nm small{display:block;font-weight:400;font-size:11px;color:var(--suave)}
+.cc-row{display:flex;gap:10px;align-items:center;margin-top:8px}
+.cc-row select{flex:1;height:32px}
+.opts{margin-top:8px;background:#F4F6F6;border-radius:8px;padding:8px 10px;font-size:12px;display:flex;align-items:center;gap:8px}
+.opts span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#444E4E}
+.ov{position:absolute;inset:0;background:rgba(31,42,42,.55);display:flex;align-items:flex-end;z-index:5}
+.ov.ctr{align-items:center;justify-content:center;padding:16px}
+.pop{background:#fff;width:100%;max-height:90%;border-radius:12px 12px 0 0;display:flex;flex-direction:column}
+.pop-hd{height:48px;flex:none;background:var(--verde);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 8px 0 14px;border-radius:12px 12px 0 0;font-weight:600}
+.pop-hd button{background:none;border:0;color:#fff;cursor:pointer;width:36px;height:36px;display:flex;align-items:center;justify-content:center}
+.pop-bd{padding:12px 14px;overflow:auto}
+.pop-ft{padding:10px 14px;border-top:1px solid var(--borda);display:flex;gap:8px;flex:none}
+.op{display:flex;gap:6px;margin-bottom:6px}
+.op .in{height:34px}
+.op .ib{width:34px;height:34px;color:#B3261E}
+.pls{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.cfm{background:#fff;border-radius:12px;padding:18px 16px 16px;width:100%;text-align:center}
+.cfm h3{font-size:15px;margin:10px 0 6px;color:var(--verdeEsc)}
+.cfm p{font-size:12.5px;color:#444E4E;margin:0 0 14px;line-height:1.45}
+.cfi{width:48px;height:48px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;background:#FDF4D8}
+.ul{margin:0;padding:0;list-style:none}
+.ul li{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #F1F3F3;font-size:12.5px}
+.ul li:last-child{border-bottom:0}
+.load{position:absolute;inset:0;background:rgba(244,246,246,.85);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;z-index:9;font-size:13px;color:var(--verdeEsc);font-weight:600}
+.spin{width:30px;height:30px;border-radius:50%;border:3px solid #CDEBE8;border-top-color:var(--verde);animation:g 0.8s linear infinite}
+@keyframes g{to{transform:rotate(360deg)}}
+.ver{font-size:10.5px;color:var(--suave);text-align:center;padding:4px 0 2px}
 </style>
 </head>
 <body>
-<div class="hd"><span class="logo">logo_vale_branca</span><span class="dv"></span><b>Forms Dimensionador</b></div>
-<div class="strip"></div>
-<main>
-  <div class="bc">Teste de instalação</div>
-
-  <div class="sc">
-    <h3>1. Conexão com o Excel <span id="p1" class="pl neu">Aguardando</span></h3>
-    <div class="kv">
-      <div><small>Aplicativo</small><span id="host">·</span></div>
-      <div><small>Plataforma</small><span id="plat">·</span></div>
-      <div><small>Versão do Office</small><span id="ver">·</span></div>
-      <div><small>API do Excel</small><span id="api">·</span></div>
-    </div>
-  </div>
-
-  <div class="sc">
-    <h3>2. Leitura <span id="p2" class="pl neu">Não testado</span></h3>
-    <p>Lê o nome das abas, as tabelas do arquivo e a seleção atual.</p>
-    <button type="button" class="btn out" id="b2" disabled>Testar leitura</button>
-    <div class="res" id="r2"></div>
-  </div>
-
-  <div class="sc">
-    <h3>3. Gravação <span id="p3" class="pl neu">Não testado</span></h3>
-    <p>Cria a aba <b>Teste_Suplemento</b> e grava data e hora nela. Não mexe nos seus dados.</p>
-    <button type="button" class="btn out" id="b3" disabled>Testar gravação</button>
-    <div class="res" id="r3"></div>
-  </div>
-
-  <div class="sc">
-    <h3>4. Configuração no arquivo <span id="p4" class="pl neu">Não testado</span></h3>
-    <p>Salva uma configuração de teste dentro do arquivo e lê de volta. É onde o formulário vai guardar os campos escolhidos.</p>
-    <button type="button" class="btn out" id="b4" disabled>Testar configuração</button>
-    <div class="res" id="r4"></div>
-  </div>
-
-  <button type="button" class="btn pri" id="bAll" disabled>Rodar todos os testes</button>
-  <div class="ft">Versão de teste 1.0.2 · Forms Dimensionador</div>
-</main>
-
+<div id="app" class="p"></div>
 <script>
-const $=id=>document.getElementById(id);
-const pill=(id,cls,txt)=>{const e=$(id);e.className='pl '+cls;e.textContent=txt;};
-const out=(id,txt,err)=>{const e=$(id);e.textContent=txt;e.className='res'+(err?' err':'');};
-const agora=()=>new Date().toLocaleString('pt-BR');
-
-function comPrazo(promessa,seg){
-  return Promise.race([promessa,new Promise((_,rej)=>setTimeout(()=>rej({code:'SemResposta',message:'O Excel não respondeu em '+seg+' segundos. Provável falta de permissão de leitura e gravação no manifesto.'}),seg*1000))]);
+/* ===== utilidades ===== */
+const VERSAO='1.1.0';
+const CHAVE_CFG='formsDimensionador';
+const TIPOS={texto:'Texto curto',longo:'Texto longo',numero:'Número',data:'Data',lista:'Lista suspensa',simnao:'Sim / Não'};
+const FONTES={manual:'Digitada no suplemento',intervalo:'Intervalo da planilha',validacao:'Validação de dados da coluna'};
+const IC={
+ x:'<path d="M18 6 6 18M6 6l12 12"/>',
+ check:'<path d="M20 6 9 17l-5-5"/>',
+ chevL:'<path d="m15 18-6-6 6-6"/>',
+ chevR:'<path d="m9 18 6-6-6-6"/>',
+ chevD:'<path d="m6 9 6 6 6-6"/>',
+ search:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+ form:'<rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+ sliders:'<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/>',
+ refresh:'<path d="M21 12a9 9 0 1 1-3-6.7L21 8"/><path d="M21 3v5h-5"/>',
+ home:'<path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/>',
+ target:'<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/>',
+ trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ alert:'<path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4M12 17h.01"/>',
+ info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
+ table:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M9 4v16"/>',
+ lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+ save:'<path d="M5 3h11l3 3v13a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M7 3v5h8M7 21v-7h10v7"/>',
+ edit:'<path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13 7l4 4"/>'
+};
+const svg=(p,c='currentColor',s=18)=>`<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="${c}" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const esc=s=>String(s??'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+const clone=o=>JSON.parse(JSON.stringify(o));
+const colL=n=>{let s='';n=n+1;while(n>0){const m=(n-1)%26;s=String.fromCharCode(65+m)+s;n=Math.floor((n-1)/26);}return s;};
+const serialToISO=v=>{if(v===''||v==null||typeof v!=='number')return '';const d=new Date(Math.round((v-25569)*86400000));return isNaN(d)?'':d.toISOString().slice(0,10);};
+const isoToSerial=s=>{const p=String(s).split('-').map(Number);return Date.UTC(p[0],p[1]-1,p[2])/86400000+25569;};
+const agora=()=>new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+function erroTxt(e){
+  if(!e) return 'Erro desconhecido.';
+  const m={ItemNotFound:'Item não encontrado no arquivo.',InvalidArgument:'Endereço ou valor inválido.',AccessDenied:'O Excel bloqueou a operação. Verifique se o arquivo está em modo de edição.'};
+  return (e.code&&m[e.code])?m[e.code]+(e.message?' ('+e.message+')':''):(e.message||String(e));
 }
 
-function maiorApi(){
-  let v='1.1';
-  for(let i=2;i<=20;i++){ if(Office.context.requirements.isSetSupported('ExcelApi','1.'+i)) v='1.'+i; else break; }
-  return v;
-}
+/* ===== estado ===== */
+let S={
+  view:'ini', cfg:null, src:null, campos:[],
+  ed:null, edSrc:null, abas:[], tabelas:[], fonteErro:'',
+  sel:0, draft:{}, err:{}, est:'normal', pend:null, gravados:0, linhaSalva:0, horaSalva:'', buscaMsg:'', conflito:[],
+  popup:null, filtro:'todas', loading:'', erro:''
+};
+let scrollTop=0, lastView=null, topNext=true;
 
-async function testeLeitura(){
-  pill('p2','atn','Testando');
-  try{
-    await comPrazo(Excel.run(async ctx=>{
-      const abas=ctx.workbook.worksheets; abas.load('items/name');
-      const tabs=ctx.workbook.tables; tabs.load('items/name');
-      const sel=ctx.workbook.getSelectedRange(); sel.load('address');
-      await ctx.sync();
-      const linhas=[];
-      for(const t of tabs.items){ const r=t.getDataBodyRange(); r.load('rowCount'); linhas.push(r); }
-      await ctx.sync();
-      const tt=tabs.items.map((t,i)=>`${t.name} (${linhas[i].rowCount} linhas)`).join(', ')||'nenhuma';
-      out('r2',`Abas: ${abas.items.map(a=>a.name).join(', ')}\nTabelas: ${tt}\nSeleção atual: ${sel.address}`);
-    }),15);
-    pill('p2','pos','OK'); return true;
-  }catch(e){ pill('p2','neg','Falhou'); out('r2',erroTxt(e),true); return false; }
+/* ===== acesso ao Excel ===== */
+function corpo(ctx,c){
+  const ws=ctx.workbook.worksheets.getItem(c.aba);
+  if(c.fonte.tipo==='tabela'){
+    const t=ws.tables.getItem(c.fonte.nome);
+    return {ws,hdr:t.getHeaderRowRange(),body:t.getDataBodyRange()};
+  }
+  const r=ws.getRange(c.fonte.endereco);
+  if(c.cabecalho) return {ws,hdr:r.getRow(0),body:r.getOffsetRange(1,0).getResizedRange(-1,0)};
+  return {ws,hdr:null,body:r};
 }
-
-async function testeGravacao(){
-  pill('p3','atn','Testando');
-  try{
-    await comPrazo(Excel.run(async ctx=>{
-      let ws=ctx.workbook.worksheets.getItemOrNullObject('Teste_Suplemento');
-      await ctx.sync();
-      if(ws.isNullObject){ ws=ctx.workbook.worksheets.add('Teste_Suplemento'); }
-      ws.getRange('A1:B2').values=[['Teste','Resultado'],['Gravação pelo Forms Dimensionador',agora()]];
-      ws.getRange('A1:B1').format.font.bold=true;
-      ws.getRange('A:B').format.autofitColumns();
-      await ctx.sync();
-    }),15);
-    pill('p3','pos','OK'); out('r3','Gravado em Teste_Suplemento!A1:B2 às '+agora()+'.'); return true;
-  }catch(e){ pill('p3','neg','Falhou'); out('r3',erroTxt(e),true); return false; }
+function faixaRef(ctx,ref){
+  ref=String(ref).replace(/^=/,'').trim();
+  const m=ref.match(/^(?:'([^']+)'|([^!]+))!(.+)$/);
+  if(m) return ctx.workbook.worksheets.getItem(m[1]||m[2]).getRange(m[3].replace(/\$/g,''));
+  return ctx.workbook.names.getItem(ref).getRange();
 }
-
-function testeConfig(){
-  pill('p4','atn','Testando');
-  return new Promise(res=>{
-    try{
-      const cfg={versao:1,teste:true,salvoEm:agora()};
-      Office.context.document.settings.set('formsDimensionador_teste',cfg);
-      Office.context.document.settings.saveAsync(r=>{
-        if(r.status===Office.AsyncResultStatus.Succeeded){
-          const lido=Office.context.document.settings.get('formsDimensionador_teste');
-          pill('p4','pos','OK'); out('r4','Salvo e lido de volta: '+JSON.stringify(lido)); res(true);
-        }else{ pill('p4','neg','Falhou'); out('r4',erroTxt(r.error),true); res(false); }
-      });
-    }catch(e){ pill('p4','neg','Falhou'); out('r4',erroTxt(e),true); res(false); }
+async function lerFonte(c){
+  return Excel.run(async ctx=>{
+    const {ws,hdr,body}=corpo(ctx,c);
+    ws.load('id');
+    if(hdr) hdr.load('values');
+    body.load('values,text,formulas,numberFormat,rowCount,columnCount,rowIndex,columnIndex');
+    await ctx.sync();
+    const cc=body.columnCount;
+    const headers=Array.from({length:cc},(_,i)=>{const h=hdr?String(hdr.values[0][i]??'').trim():'';return h||('Coluna '+colL(body.columnIndex+i));});
+    let dvs=[];
+    if(body.rowCount>0){
+      dvs=headers.map((_,i)=>{const d=body.getCell(0,i).dataValidation;d.load('type,rule');return d;});
+      try{await ctx.sync();}catch(e){dvs=[];}
+    }
+    const dv=headers.map((_,i)=>{const d=dvs[i];try{if(d&&d.type==='List'&&d.rule&&d.rule.list)return String(d.rule.list.source||'');}catch(e){}return null;});
+    const refs=new Set();
+    dv.forEach(s=>{if(s&&s.startsWith('='))refs.add(s.slice(1));});
+    (c.campos||[]).forEach(f=>{if(f.lista&&f.lista.fonte==='intervalo'&&f.lista.ref)refs.add(String(f.lista.ref).replace(/^=/,''));});
+    const listas={};
+    for(const ref of refs){
+      try{const rg=faixaRef(ctx,ref);rg.load('values');await ctx.sync();listas[ref]=rg.values.flat().map(v=>String(v).trim()).filter(Boolean);}
+      catch(e){listas[ref]=null;}
+    }
+    const dvOpc=dv.map(s=>{if(s==null)return null;if(s.startsWith('='))return listas[s.slice(1)]||[];return s.split(/[;,]/).map(x=>x.trim()).filter(Boolean);});
+    return {headers,values:body.values,texts:body.text,formulas:body.formulas,formats:body.numberFormat,
+            rowIndex:body.rowIndex,colIndex:body.columnIndex,rowCount:body.rowCount,colCount:cc,wsId:ws.id,dvOpc,listas};
+  });
+}
+async function lerAbas(){
+  await Excel.run(async ctx=>{
+    const ws=ctx.workbook.worksheets;ws.load('items/name');
+    const tb=ctx.workbook.tables;tb.load('items/name,items/worksheet/name');
+    const at=ctx.workbook.worksheets.getActiveWorksheet();at.load('name');
+    await ctx.sync();
+    S.abas=ws.items.map(w=>w.name);
+    S.tabelas=tb.items.map(t=>({nome:t.name,aba:t.worksheet.name}));
+    S.abaAtiva=at.name;
   });
 }
 
-function erroTxt(e){
-  if(!e) return 'Erro desconhecido.';
-  const cod=e.code||e.name||'';
-  return `Erro${cod?' ('+cod+')':''}: ${e.message||e}\nTire um print desta mensagem para mandar à TI.`;
+/* ===== detecção de campos ===== */
+function detectar(src,antigos){
+  return src.headers.map((h,i)=>{
+    const col=src.values.map(r=>r[i]);
+    const formula=src.formulas.some(r=>String(r[i]).startsWith('='));
+    const cheios=col.map((v,j)=>[v,j]).filter(([v])=>v!==''&&v!=null);
+    let det='texto';
+    if(src.dvOpc[i]) det='lista';
+    else if(cheios.length&&cheios.every(([v])=>typeof v==='boolean')) det='simnao';
+    else if(cheios.length&&cheios.every(([v])=>typeof v==='number')){
+      const f=String(src.formats[cheios[0][1]][i]||'');
+      det=(/d/i.test(f)&&/m/i.test(f)&&/(y|a)/i.test(f)&&!/^[#0]/.test(f))?'data':'numero';
+    }else if(cheios.some(([v])=>String(v).length>60)) det='longo';
+    const base={nome:h,idx:i,det,formula,val:!!src.dvOpc[i],modo:formula?'ler':'edit',tipo:det,obrig:false,
+      lista:{fonte:src.dvOpc[i]?'validacao':'manual',ref:'',opcoes:[]}};
+    const a=(antigos||[]).find(x=>x.nome===h);
+    if(a){
+      base.modo=(formula&&a.modo==='edit')?'ler':a.modo;
+      base.tipo=a.tipo||det; base.obrig=!!a.obrig;
+      if(a.lista) base.lista={fonte:a.lista.fonte||'manual',ref:a.lista.ref||'',opcoes:(a.lista.opcoes||[]).slice()};
+      if(base.lista.fonte==='validacao'&&!base.val) base.lista.fonte='manual';
+    }
+    return base;
+  });
+}
+function chaveSugerida(src){
+  for(let i=0;i<src.colCount;i++){
+    const v=src.values.map(r=>String(r[i]??'').trim());
+    if(v.length&&v.every(x=>x)&&new Set(v).size===v.length) return src.headers[i];
+  }
+  return src.headers[0];
+}
+function opcoes(f,src){
+  if(f.lista.fonte==='validacao') return (src.dvOpc[f.idx]||[]).slice();
+  if(f.lista.fonte==='intervalo'){const l=src.listas[String(f.lista.ref).replace(/^=/,'')];return l?l.slice():[];}
+  return (f.lista.opcoes||[]).slice();
+}
+function problemasChave(src,nome){
+  const i=src.headers.indexOf(nome); if(i<0) return {vazios:0,dup:0};
+  const v=src.values.map(r=>String(r[i]??'').trim());
+  const vazios=v.filter(x=>!x).length;
+  const cont={};v.filter(Boolean).forEach(x=>cont[x]=(cont[x]||0)+1);
+  return {vazios,dup:Object.values(cont).filter(n=>n>1).length};
 }
 
-Office.onReady(info=>{
-  if(info.host!==Office.HostType.Excel){ pill('p1','neg','Fora do Excel'); $('host').textContent=info.host||'desconhecido'; return; }
-  $('host').textContent='Excel';
-  $('plat').textContent={PC:'Windows (desktop)',OfficeOnline:'Navegador (web/Teams)',Mac:'Mac',iOS:'iPad'}[info.platform]||info.platform;
-  try{ $('ver').textContent=Office.context.diagnostics.version; }catch(e){ $('ver').textContent='·'; }
-  $('api').textContent='ExcelApi '+maiorApi();
-  pill('p1','pos','OK');
-  ['b2','b3','b4','bAll'].forEach(id=>$(id).disabled=false);
-  $('b2').onclick=testeLeitura;
-  $('b3').onclick=testeGravacao;
-  $('b4').onclick=testeConfig;
-  $('bAll').onclick=async()=>{await testeLeitura();await testeGravacao();await testeConfig();};
-});
+/* ===== configuração salva ===== */
+function lerCfg(){try{return Office.context.document.settings.get(CHAVE_CFG)||null;}catch(e){return null;}}
+function gravarCfg(cfg){
+  return new Promise((res,rej)=>{
+    Office.context.document.settings.set(CHAVE_CFG,cfg);
+    Office.context.document.settings.saveAsync(r=>r.status===Office.AsyncResultStatus.Succeeded?res():rej(r.error));
+  });
+}
 
-setTimeout(()=>{ if(!window.Office||$('p1').textContent==='Aguardando'){ pill('p1','neg','Sem conexão'); $('host').textContent='Office.js não carregou. A rede pode estar bloqueando appsforoffice.microsoft.com.'; } },8000);
+/* ===== navegação ===== */
+async function comCarga(txt,fn){
+  S.loading=txt;render();
+  try{await fn();}catch(e){S.erro=erroTxt(e);}
+  S.loading='';render();
+}
+function go(v){S.erro='';S.popup=null;topNext=true;
+  if(v==='fon') return iniciarConfig();
+  if(v==='frm') return abrirForm();
+  S.view=v;render();
+}
+async function iniciarConfig(){
+  await comCarga('Lendo as abas do arquivo',async()=>{
+    await lerAbas();
+    if(S.cfg) S.ed=clone(S.cfg);
+    else{
+      const t=S.tabelas.find(x=>x.aba===S.abaAtiva)||S.tabelas[0];
+      S.ed=t?{aba:t.aba,fonte:{tipo:'tabela',nome:t.nome},cabecalho:true,chave:'',campos:[]}
+            :{aba:S.abaAtiva,fonte:{tipo:'intervalo',endereco:''},cabecalho:true,chave:'',campos:[]};
+      if(!t) await intervaloUsado();
+    }
+    S.view='fon';
+    await carregarEd();
+  });
+}
+async function intervaloUsado(){
+  try{await Excel.run(async ctx=>{const r=ctx.workbook.worksheets.getItem(S.ed.aba).getUsedRange(true);r.load('address');await ctx.sync();S.ed.fonte.endereco=r.address.split('!').pop();});}
+  catch(e){S.ed.fonte.endereco='';}
+}
+async function carregarEd(){
+  S.fonteErro='';S.edSrc=null;
+  const f=S.ed.fonte;
+  if(f.tipo==='tabela'&&!f.nome){S.fonteErro='Esta aba não tem tabela. Escolha outra aba ou use um intervalo.';return;}
+  if(f.tipo==='intervalo'&&!/^\$?[A-Z]{1,3}\$?[0-9]+:\$?[A-Z]{1,3}\$?[0-9]+$/i.test(f.endereco||'')){S.fonteErro=f.endereco?`"${f.endereco}" não é um intervalo válido. Use o formato A1:N19.`:'Informe o intervalo dos dados.';return;}
+  try{
+    S.edSrc=await lerFonte(S.ed);
+    if(!S.edSrc.rowCount){S.fonteErro='A fonte não tem registros.';}
+    S.ed.campos=detectar(S.edSrc,S.ed.campos);
+    if(!S.ed.chave||!S.edSrc.headers.includes(S.ed.chave)) S.ed.chave=chaveSugerida(S.edSrc);
+    const k=S.ed.campos.find(c=>c.nome===S.ed.chave); if(k) k.modo='ler';
+  }catch(e){S.edSrc=null;S.fonteErro=erroTxt(e);}
+}
+async function setAba(v){
+  S.ed.aba=v;S.ed.campos=[];S.ed.chave='';
+  const t=S.tabelas.find(x=>x.aba===v);
+  if(S.ed.fonte.tipo==='tabela') S.ed.fonte={tipo:'tabela',nome:t?t.nome:''};
+  else{S.ed.fonte={tipo:'intervalo',endereco:''};}
+  await comCarga('Lendo a aba',async()=>{if(S.ed.fonte.tipo==='intervalo')await intervaloUsado();await carregarEd();});
+}
+async function setTipoFonte(t){
+  if(S.ed.fonte.tipo===t) return;
+  S.ed.campos=[];S.ed.chave='';
+  if(t==='tabela'){const tb=S.tabelas.find(x=>x.aba===S.ed.aba);S.ed.fonte={tipo:'tabela',nome:tb?tb.nome:''};S.ed.cabecalho=true;}
+  else S.ed.fonte={tipo:'intervalo',endereco:''};
+  await comCarga('Lendo a fonte',async()=>{if(t==='intervalo')await intervaloUsado();await carregarEd();});
+}
+async function setTabela(n){S.ed.fonte.nome=n;S.ed.campos=[];S.ed.chave='';await comCarga('Lendo a tabela',carregarEd);}
+async function setIntervalo(v){S.ed.fonte.endereco=v.trim().toUpperCase();S.ed.campos=[];S.ed.chave='';await comCarga('Lendo o intervalo',carregarEd);}
+async function usarSelecao(){
+  await comCarga('Lendo a seleção',async()=>{
+    await Excel.run(async ctx=>{const r=ctx.workbook.getSelectedRange();r.load('address');r.worksheet.load('name');await ctx.sync();
+      S.ed.aba=r.worksheet.name;S.ed.fonte={tipo:'intervalo',endereco:r.address.split('!').pop()};});
+    S.ed.campos=[];S.ed.chave='';await carregarEd();
+  });
+}
+async function togCab(){if(S.ed.fonte.tipo==='tabela')return;S.ed.cabecalho=!S.ed.cabecalho;S.ed.campos=[];S.ed.chave='';await comCarga('Relendo',carregarEd);}
+function setChave(n){S.ed.chave=n;const k=S.ed.campos.find(c=>c.nome===n);if(k)k.modo='ler';render();}
+
+/* campos */
+const campoEd=n=>S.ed.campos.find(c=>c.nome===n);
+function setFiltro(f){S.filtro=f;render();}
+function setModo(i,m){S.ed.campos[i].modo=m;render();}
+function setTipo(i,t){const f=S.ed.campos[i];f.tipo=t;if(t==='lista'&&!f.val&&f.lista.fonte==='validacao')f.lista.fonte='manual';render();}
+function togObr(i){S.ed.campos[i].obrig=!S.ed.campos[i].obrig;render();}
+function abrirOpc(i){const f=S.ed.campos[i];S.popup={i,fonte:f.lista.fonte,ref:f.lista.ref||'',opcoes:(f.lista.opcoes||[]).slice()};render();}
+function fecharOpc(){S.popup=null;render();}
+function setFonteOpc(fo){const f=S.ed.campos[S.popup.i];if(fo==='validacao'&&!f.val)return;S.popup.fonte=fo;render();}
+function setRef(v){S.popup.ref=v.trim();}
+async function lerRefPopup(){
+  const ref=S.popup.ref;if(!ref)return;
+  await comCarga('Lendo as opções',async()=>{
+    await Excel.run(async ctx=>{const rg=faixaRef(ctx,ref);rg.load('values');await ctx.sync();S.edSrc.listas[ref.replace(/^=/,'')]=rg.values.flat().map(v=>String(v).trim()).filter(Boolean);});
+  });
+}
+function setOpc(j,v){S.popup.opcoes[j]=v;}
+function rmOpc(j){S.popup.opcoes.splice(j,1);render();}
+function addOpc(){const el=document.getElementById('nopc');const v=(el&&el.value||'').trim();if(!v)return;S.popup.opcoes.push(v);render();setTimeout(()=>{const n=document.getElementById('nopc');if(n)n.focus();},0);}
+async function salvarOpc(){
+  const p=S.popup,f=S.ed.campos[p.i];
+  if(p.fonte==='intervalo'&&p.ref&&!(p.ref.replace(/^=/,'') in S.edSrc.listas)) await lerRefPopup();
+  f.lista={fonte:p.fonte,ref:p.ref,opcoes:p.opcoes.map(s=>s.trim()).filter(Boolean)};
+  S.popup=null;render();
+}
+function irCampos(){if(!S.edSrc||S.fonteErro)return;S.view='cam';topNext=true;render();}
+function irRevisar(){S.view='rev';topNext=true;render();}
+async function salvarConfig(){
+  const e=S.ed;
+  const cfg={versao:1,aba:e.aba,fonte:clone(e.fonte),cabecalho:e.cabecalho,chave:e.chave,
+    campos:e.campos.map(c=>({nome:c.nome,modo:c.modo,tipo:c.tipo,obrig:c.obrig,lista:c.lista})),
+    atualizadoEm:new Date().toLocaleString('pt-BR')};
+  await comCarga('Salvando a configuração',async()=>{await gravarCfg(cfg);S.cfg=cfg;});
+  if(!S.erro){S.sel=0;abrirForm();}
+}
+
+/* ===== formulário ===== */
+async function abrirForm(manterChave){
+  if(!S.cfg){S.view='ini';render();return;}
+  S.view='frm';S.draft={};S.err={};S.conflito=[];S.pend=null;
+  if(S.est!=='salvo') S.est='normal';
+  await comCarga('Carregando registros',async()=>{
+    try{
+      S.src=await lerFonte(S.cfg);
+      S.campos=detectar(S.src,S.cfg.campos);
+      const ki=S.src.headers.indexOf(S.cfg.chave);
+      if(manterChave!=null&&ki>=0){const j=S.src.values.findIndex(r=>String(r[ki])===String(manterChave));if(j>=0)S.sel=j;}
+      if(S.sel>=S.src.rowCount) S.sel=Math.max(0,S.src.rowCount-1);
+      if(ki<0) throw {message:`A coluna de identificação "${S.cfg.chave}" não existe mais na fonte. Revise a configuração.`};
+    }catch(e){S.src=null;S.est='semfonte';S.erroFonte=erroTxt(e);}
+  });
+}
+const kIdx=()=>S.src.headers.indexOf(S.cfg.chave);
+const linhaExcel=i=>S.src.rowIndex+i+1;
+const editaveis=()=>S.campos.filter(c=>c.modo==='edit'&&!c.formula&&c.nome!==S.cfg.chave);
+const leitura=()=>S.campos.filter(c=>c.modo==='ler'||c.nome===S.cfg.chave||(c.formula&&c.modo!=='oculta'));
+function paraInput(f,v){
+  if(v===''||v==null) return '';
+  if(f.tipo==='data') return typeof v==='number'?serialToISO(v):String(v);
+  if(f.tipo==='simnao'&&typeof v==='boolean') return v?'Sim':'Não';
+  return String(v);
+}
+function paraExcel(f,s){
+  if(s===''||s==null) return '';
+  if(f.tipo==='numero'){const n=Number(String(s).replace(',','.'));return isNaN(n)?s:n;}
+  if(f.tipo==='data') return /^\d{4}-\d{2}-\d{2}$/.test(s)?isoToSerial(s):s;
+  if(f.tipo==='simnao'&&f.det==='simnao') return s==='Sim';
+  return s;
+}
+function valorAtual(f){return f.idx in S.draft?S.draft[f.idx]:paraInput(f,S.src.values[S.sel][f.idx]);}
+function ed(i,v,el){
+  const f=S.campos[i],o=paraInput(f,S.src.values[S.sel][i]);
+  if(String(v)===o) delete S.draft[i]; else S.draft[i]=v;
+  if(el&&el.classList) el.classList.toggle('chg',i in S.draft);
+  if(Object.keys(S.draft).length&&S.est==='salvo') S.est='normal';
+  updFoot();
+}
+function edR(i,v){ed(i,v);render();}
+function validar(){
+  const e={};
+  editaveis().forEach(f=>{
+    const s=String(valorAtual(f)??'').trim();
+    if(f.obrig&&!s){e[f.idx]='Campo obrigatório.';return;}
+    if(!s) return;
+    if(f.tipo==='numero'&&isNaN(Number(s.replace(',','.')))) e[f.idx]='Informe um número.';
+    if(f.tipo==='lista'){const op=opcoes(f,S.src);if(op.length&&!op.includes(s)&&(f.idx in S.draft))e[f.idx]='Escolha uma opção da lista.';}
+  });
+  return e;
+}
+async function salvar(forcar){
+  S.err=validar();
+  if(Object.keys(S.err).length){S.est='erro';topNext=true;render();return;}
+  const ks=Object.keys(S.draft).map(Number);if(!ks.length)return;
+  const ki=kIdx(),chave=S.src.values[S.sel][ki],orig=S.src.values[S.sel].slice();
+  let conflito=[];
+  await comCarga('Gravando na planilha',async()=>{
+    await Excel.run(async ctx=>{
+      const {body}=corpo(ctx,S.cfg);body.load('values');await ctx.sync();
+      const r=body.values.findIndex(row=>String(row[ki])===String(chave));
+      if(r<0) throw {message:`Não encontramos o registro ${chave}. Ele pode ter sido apagado ou o ID mudou.`};
+      if(!forcar){conflito=ks.filter(i=>String(body.values[r][i])!==String(orig[i]));if(conflito.length)return;}
+      ks.forEach(i=>{body.getCell(r,i).values=[[paraExcel(S.campos[i],S.draft[i])]];});
+      await ctx.sync();
+      S.linhaSalva=S.src.rowIndex+r+1;
+    });
+  });
+  if(S.erro){render();return;}
+  if(conflito.length){S.conflito=conflito;S.est='conflito';topNext=true;render();return;}
+  S.gravados=ks.length;S.horaSalva=agora();S.est='salvo';topNext=true;
+  await abrirForm(chave);
+  topNext=true;render();
+}
+function descartar(){S.draft={};S.err={};S.est='normal';render();}
+async function recarregar(){const ki=S.src?kIdx():-1;const ch=(S.src&&ki>=0)?S.src.values[S.sel][ki]:null;S.est='normal';await abrirForm(ch);}
+function trocar(i,daPlanilha){
+  if(!S.src||i<0||i>=S.src.rowCount||i===S.sel) return;
+  if(Object.keys(S.draft).length){S.pend=i;S.est='trocar';render();return;}
+  S.sel=i;S.draft={};S.err={};S.est='normal';S.buscaMsg='';topNext=true;render();
+  if(!daPlanilha) selecionarLinha(i);
+}
+function contEdit(){S.pend=null;S.est='normal';render();}
+function descTrocar(){const i=S.pend;S.pend=null;S.draft={};S.err={};S.est='normal';S.sel=i;topNext=true;render();selecionarLinha(i);}
+function selecionarLinha(i){
+  Excel.run(async ctx=>{const {body}=corpo(ctx,S.cfg);body.getCell(i,Math.max(0,kIdx())).select();await ctx.sync();}).catch(()=>{});
+}
+function buscar(v){
+  v=v.trim();if(!v){S.buscaMsg='';render();return;}
+  const q=v.toLowerCase(),cols=leitura().map(c=>c.idx);
+  const i=S.src.texts.findIndex(r=>cols.some(c=>String(r[c]).toLowerCase().includes(q)));
+  if(i<0){S.buscaMsg=`Nenhum registro encontrado para "${v}".`;render();return;}
+  S.buscaMsg='';trocar(i);
+}
+function aoSelecionar(ev){
+  if(S.view!=='frm'||!S.src||ev.worksheetId!==S.src.wsId) return;
+  const m=String(ev.address||'').split('!').pop().match(/[A-Z]+(\d+)/i); if(!m) return;
+  trocar(Number(m[1])-1-S.src.rowIndex,true);
+}
+
+/* ===== peças da interface ===== */
+function stepper(n){
+  const L=['Fonte','Campos','Revisar'];
+  return `<div class="st">${L.map((l,i)=>{const c=i+1<n?'ok':i+1===n?'cur':'';return `<div class="s ${c}"><span class="c">${i+1<n?svg(IC.check,'#fff',14):i+1}</span>${l}</div>`;}).join('')}</div>`;
+}
+const sw=(on,lbl,fn,dis)=>`<button type="button" class="sw" aria-pressed="${on}" onclick="${fn}" ${dis?'disabled':''}><i></i>${lbl}</button>`;
+const rc=(on,t,s,fn,dis)=>`<button type="button" class="rc" aria-pressed="${on}" onclick="${fn}" ${dis?'disabled':''}><i></i><span><b>${t}</b><small>${s}</small></span></button>`;
+const fonteTxt=c=>c.fonte.tipo==='tabela'?`Tabela ${c.fonte.nome}`:`Intervalo ${c.fonte.endereco}`;
+
+function vInicio(){
+  let b=`<div class="p-bc">Início</div>`,f='';
+  if(!S.cfg){
+    b+=`<div class="sc"><div class="empty">${svg(IC.table,'#047E7D',40)}<h3>Este arquivo ainda não tem formulário</h3><p>Escolha a tabela e diga quais colunas aparecem e quais podem ser editadas. Leva uns 2 minutos.</p></div></div>`;
+    f=`<button type="button" class="btn b-pri w100" onclick="go('fon')">${svg(IC.sliders,'#fff',16)} Configurar formulário</button>`;
+  }else{
+    const ed=S.cfg.campos.filter(c=>c.modo==='edit').length,le=S.cfg.campos.filter(c=>c.modo==='ler').length;
+    b+=`<div class="hero"><svg class="crv" viewBox="0 0 330 160" preserveAspectRatio="none" aria-hidden="true"><path d="M-10 130 C 80 60, 190 180, 340 70" stroke="#fff" stroke-opacity=".1" stroke-width="26" fill="none"/><path d="M-10 40 C 120 0, 200 90, 340 10" stroke="#fff" stroke-opacity=".1" stroke-width="14" fill="none"/></svg>
+      <div class="eb">• FORMS DIMENSIONADOR</div><h2>Olá!</h2><div class="ln"></div><p>Atualize os registros da tabela por formulário, sem rolar a planilha atrás da linha certa.</p></div>
+      <div class="sc"><h3>Formulário deste arquivo <span class="pl pos">Configurado</span></h3>
+      <div class="kv"><div><small>Aba</small><span>${esc(S.cfg.aba)}</span></div><div><small>Coluna de identificação</small><span>${esc(S.cfg.chave)}</span></div>
+      <div class="full"><small>Fonte</small><span>${esc(fonteTxt(S.cfg))}</span></div>
+      <div><small>Campos para ler</small><span>${le}</span></div><div><small>Campos para editar</small><span>${ed}</span></div></div>
+      <div class="hint">Última configuração em ${esc(S.cfg.atualizadoEm||'·')}.</div></div>`;
+    f=`<button type="button" class="btn b-pri w100" onclick="go('frm')">${svg(IC.form,'#fff',16)} Abrir formulário</button><button type="button" class="btn b-out w100" onclick="go('fon')">Editar configuração</button>`;
+  }
+  b+=`<div class="sc"><h3>Como funciona</h3><ul class="steps"><li><b>1</b><span>Escolha a aba, a tabela e a coluna que identifica cada registro.</span></li><li><b>2</b><span>Marque o que cada coluna vira: só leitura, campo editável ou oculta. Defina as listas suspensas.</span></li><li><b>3</b><span>Abra o formulário, escolha o registro e salve. A edição cai direto na linha da tabela.</span></li></ul></div>`;
+  return {b,f,ov:''};
+}
+
+function vFonte(){
+  const e=S.ed,tabsAba=S.tabelas.filter(t=>t.aba===e.aba),ok=S.edSrc&&!S.fonteErro;
+  let b=`<div class="p-bc">Configurar › Fonte de dados</div>${stepper(1)}
+  <div class="sc"><h3>Onde estão os dados</h3>
+    <label class="lb" for="sAba">Aba *</label>
+    <select id="sAba" class="in" onchange="setAba(this.value)">${S.abas.map(a=>`<option ${a===e.aba?'selected':''}>${esc(a)}</option>`).join('')}</select>
+    <span class="lb">Tipo de fonte *</span>
+    ${rc(e.fonte.tipo==='tabela','Tabela do Excel <span class="pl pos">Recomendado</span>','Cresce sozinha quando entram linhas novas.',"setTipoFonte('tabela')")}
+    ${rc(e.fonte.tipo==='intervalo','Intervalo','Use quando os dados não estão formatados como tabela.',"setTipoFonte('intervalo')")}`;
+  if(e.fonte.tipo==='tabela'){
+    b+=`<label class="lb" for="sTab">Tabela *</label><select id="sTab" class="in" onchange="setTabela(this.value)" ${tabsAba.length?'':'disabled'}>${tabsAba.length?tabsAba.map(t=>`<option ${t.nome===e.fonte.nome?'selected':''}>${esc(t.nome)}</option>`).join(''):'<option>Nenhuma tabela nesta aba</option>'}</select>`;
+  }else{
+    const er=!!S.fonteErro&&!S.edSrc;
+    b+=`<label class="lb" for="iInt">Intervalo *</label><div class="row"><input id="iInt" class="in${er?' err':''}" value="${esc(e.fonte.endereco)}" placeholder="Ex.: A1:N19" onchange="setIntervalo(this.value)"><button type="button" class="ib" title="Usar seleção atual" aria-label="Usar seleção atual" onclick="usarSelecao()">${svg(IC.target,'#033E3D',18)}</button></div>
+    <div class="hint">Selecione as células na planilha e toque no alvo para preencher.</div>
+    <div style="margin-top:12px">${sw(e.cabecalho,'A primeira linha tem os cabeçalhos','togCab()')}</div>`;
+  }
+  b+=`</div>`;
+  if(S.edSrc){
+    const pk=problemasChave(S.edSrc,e.chave);
+    b+=`<div class="sc"><h3>Identificação do registro</h3>
+      <label class="lb" for="sCh">Coluna de identificação *</label>
+      <select id="sCh" class="in" onchange="setChave(this.value)">${e.campos.filter(c=>!c.formula).map(c=>`<option value="${esc(c.nome)}" ${c.nome===e.chave?'selected':''}>${colL(S.edSrc.colIndex+c.idx)} · ${esc(c.nome)}</option>`).join('')}</select>
+      <div class="hint">O formulário encontra a linha por esse valor, não pela posição. Assim, ordenar ou filtrar a planilha não faz gravar na linha errada.</div>
+      ${(pk.vazios||pk.dup)?`<div class="al atn" style="margin:10px 0 0">${svg(IC.alert,'#7A5700',16)}<span>${pk.vazios?pk.vazios+' registro(s) sem valor':''}${pk.vazios&&pk.dup?' e ':''}${pk.dup?pk.dup+' valor(es) repetido(s)':''} nesta coluna. Esses registros podem não ser encontrados na hora de gravar.</span></div>`:''}</div>`;
+  }
+  if(S.fonteErro) b+=`<div class="al neg">${svg(IC.alert,'#B3261E',16)}<span>${esc(S.fonteErro)}</span></div>`;
+  else if(S.edSrc) b+=`<div class="al pos">${svg(IC.check,'#00605D',16)}<span>Encontramos <b>${S.edSrc.colCount} colunas</b> e <b>${S.edSrc.rowCount} registros</b>.</span></div>`;
+  const f=`<div class="row"><button type="button" class="btn b-sec f1" onclick="go('ini')">Cancelar</button><button type="button" class="btn b-pri f2" onclick="irCampos()" ${ok?'':'disabled'}>Avançar para campos</button></div>`;
+  return {b,f,ov:''};
+}
+
+function cardCol(c,i){
+  const key=c.nome===S.ed.chave,fx=c.formula;
+  const tag=key?'<span class="pl forte">Chave</span>':fx?'<span class="pl atn">Fórmula</span>':'';
+  const det=`Detectado: ${TIPOS[c.det]}${c.val?' · validação de dados':''}`;
+  const seg=[['oculta','Ocultar'],['ler','Ler'],['edit','Editar']].map(([m,l])=>{const dis=(key&&m!=='ler')||(fx&&m==='edit');return `<button type="button" aria-pressed="${c.modo===m}" ${dis?'disabled':''} onclick="setModo(${i},'${m}')">${l}</button>`;}).join('');
+  let h=`<div class="cc m-${c.modo}"><div class="cc-top"><span class="let">${colL(S.edSrc.colIndex+c.idx)}</span><div class="cc-nm">${esc(c.nome)}<small>${det}</small></div>${tag}</div><div class="seg" role="group" aria-label="Modo da coluna ${esc(c.nome)}">${seg}</div>`;
+  if(c.modo!=='oculta'&&!key&&!fx){
+    h+=`<div class="cc-row"><select class="in" aria-label="Tipo do campo ${esc(c.nome)}" onchange="setTipo(${i},this.value)">${Object.entries(TIPOS).map(([k,l])=>`<option value="${k}" ${c.tipo===k?'selected':''}>${l}</option>`).join('')}</select>${c.modo==='edit'?sw(c.obrig,'Obrigatório',`togObr(${i})`):''}</div>`;
+    if(c.tipo==='lista'&&c.modo==='edit'){const n=opcoes(c,S.edSrc).length;h+=`<div class="opts">${svg(IC.chevD,'#047E7D',16)}<span><b>${n} opções</b> · ${FONTES[c.lista.fonte]}</span><button type="button" class="lnk" onclick="abrirOpc(${i})">${svg(IC.edit,'#047E7D',14)} Editar</button></div>`;}
+  }
+  if(fx) h+=`<div class="hint">Coluna com fórmula. O formulário mostra o resultado e nunca grava por cima.</div>`;
+  if(key) h+=`<div class="hint">Usada para localizar a linha. Fica só para leitura.</div>`;
+  return h+'</div>';
+}
+function vCampos(){
+  const C=S.ed.campos,cnt=m=>C.filter(c=>c.modo===m).length;
+  const F=[['todas','Todas',C.length],['ler','Ler',cnt('ler')],['edit','Editar',cnt('edit')],['oculta','Ocultas',cnt('oculta')]];
+  const lista=C.map((c,i)=>[c,i]).filter(([c])=>S.filtro==='todas'||c.modo===S.filtro);
+  let b=`<div class="p-bc">Configurar › Campos</div>${stepper(2)}`;
+  if(!cnt('edit')) b+=`<div class="al atn">${svg(IC.alert,'#7A5700',16)}<span>Nenhuma coluna está em Editar. O formulário vai só mostrar informações.</span></div>`;
+  b+=`<p class="intro">Diga como cada coluna aparece no formulário. <b>Ler</b> mostra como informação. <b>Editar</b> vira campo para atualizar.</p>
+  <div class="fl">${F.map(([k,l,n])=>`<button type="button" aria-pressed="${S.filtro===k}" onclick="setFiltro('${k}')">${l} ${n}</button>`).join('')}</div>
+  ${lista.length?lista.map(([c,i])=>cardCol(c,i)).join(''):`<div class="sc"><div class="empty"><p>Nenhuma coluna neste filtro.</p></div></div>`}`;
+  const f=`<div class="row"><button type="button" class="btn b-sec f1" onclick="S.view='fon';topNext=true;render()">Voltar</button><button type="button" class="btn b-pri f2" onclick="irRevisar()">Avançar para revisão</button></div>`;
+  return {b,f,ov:S.popup?popupOpc():''};
+}
+function popupOpc(){
+  const p=S.popup,c=S.ed.campos[p.i],L=colL(S.edSrc.colIndex+c.idx);
+  let b=`<span class="lb" style="margin-top:0">De onde vêm as opções *</span>
+  ${rc(p.fonte==='manual','Digitar aqui','Você mantém a lista no próprio suplemento.',"setFonteOpc('manual')")}
+  ${rc(p.fonte==='intervalo','Intervalo da planilha','Lê as opções de outra aba a cada abertura do formulário.',"setFonteOpc('intervalo')")}
+  ${rc(p.fonte==='validacao','Validação de dados da coluna',c.val?`A coluna ${L} já tem uma lista na planilha.`:`A coluna ${L} não tem validação de dados.`,"setFonteOpc('validacao')",!c.val)}`;
+  if(p.fonte==='manual'){
+    b+=`<span class="lb">Opções (${p.opcoes.length})</span>${p.opcoes.map((o,j)=>`<div class="op"><input class="in" value="${esc(o)}" aria-label="Opção ${j+1}" oninput="setOpc(${j},this.value)"><button type="button" class="ib" aria-label="Excluir opção" onclick="rmOpc(${j})">${svg(IC.trash,'#B3261E',16)}</button></div>`).join('')}
+    <div class="op"><input id="nopc" class="in" placeholder="Nova opção" onkeydown="if(event.key==='Enter')addOpc()"><button type="button" class="ib" aria-label="Adicionar opção" onclick="addOpc()">${svg(IC.plus,'#047E7D',16)}</button></div>`;
+    if(!p.opcoes.length) b+=`<div class="emsg">Adicione pelo menos uma opção.</div>`;
+  }else if(p.fonte==='intervalo'){
+    const l=S.edSrc.listas[p.ref.replace(/^=/,'')];
+    b+=`<label class="lb" for="iRef">Intervalo *</label><div class="row"><input id="iRef" class="in" value="${esc(p.ref)}" placeholder="Ex.: Listas!A2:A7" oninput="setRef(this.value)"><button type="button" class="ib" aria-label="Ler opções" title="Ler opções" onclick="lerRefPopup()">${svg(IC.refresh,'#033E3D',16)}</button></div>
+    <div class="hint">Use o formato Aba!A2:A10. Linhas em branco são ignoradas.</div>`;
+    if(l===null) b+=`<div class="emsg">Não consegui ler esse intervalo. Confira o nome da aba e o endereço.</div>`;
+    else if(l) b+=`<span class="lb">Prévia (${l.length} valores)</span><div class="pls">${l.map(o=>`<span class="pl neu">${esc(o)}</span>`).join('')}</div>`;
+  }else{
+    const l=S.edSrc.dvOpc[c.idx]||[];
+    b+=`<div class="al pos" style="margin-top:6px">${svg(IC.check,'#00605D',16)}<span>O formulário usa a mesma lista da validação de dados e acompanha quando ela mudar na planilha.</span></div><div class="pls">${l.map(o=>`<span class="pl neu">${esc(o)}</span>`).join('')}</div>`;
+  }
+  const dis=(p.fonte==='manual'&&!p.opcoes.length)||(p.fonte==='intervalo'&&!p.ref);
+  return `<div class="ov"><div class="pop" role="dialog" aria-label="Opções de ${esc(c.nome)}"><div class="pop-hd"><span>Opções de ${esc(c.nome)}</span><button type="button" aria-label="Fechar" onclick="fecharOpc()">${svg(IC.x,'#fff',18)}</button></div>
+  <div class="pop-bd">${b}</div><div class="pop-ft"><button type="button" class="btn b-sec f1" onclick="fecharOpc()">Cancelar</button><button type="button" class="btn b-pri f2" onclick="salvarOpc()" ${dis?'disabled':''}>Salvar opções</button></div></div></div>`;
+}
+
+function vRevisar(){
+  const e=S.ed,ed=e.campos.filter(c=>c.modo==='edit'&&!c.formula&&c.nome!==e.chave),le=e.campos.filter(c=>c.modo==='ler'||c.nome===e.chave),oc=e.campos.filter(c=>c.modo==='oculta').length;
+  const b=`<div class="p-bc">Configurar › Revisar</div>${stepper(3)}
+  <div class="sc"><h3>Fonte <button type="button" class="lnk" onclick="S.view='fon';render()">${svg(IC.edit,'#047E7D',14)} Alterar</button></h3>
+    <div class="kv"><div><small>Aba</small><span>${esc(e.aba)}</span></div><div><small>Registros</small><span>${S.edSrc.rowCount}</span></div>
+    <div class="full"><small>Fonte</small><span>${esc(fonteTxt(e))}</span></div>
+    <div class="full"><small>Coluna de identificação</small><span>${esc(e.chave)}</span></div></div></div>
+  <div class="sc"><h3>Campos para editar (${ed.length}) <button type="button" class="lnk" onclick="S.view='cam';render()">${svg(IC.edit,'#047E7D',14)} Alterar</button></h3>
+    <ul class="ul">${ed.map(c=>`<li><span>${esc(c.nome)}${c.obrig?' *':''}</span><span class="pl ${c.tipo==='lista'?'pos':'neu'}">${TIPOS[c.tipo]}${c.tipo==='lista'?' · '+opcoes(c,S.edSrc).length:''}</span></li>`).join('')||'<li>Nenhum</li>'}</ul></div>
+  <div class="sc"><h3>Só leitura (${le.length})</h3><div class="pls" style="margin-top:0">${le.map(c=>`<span class="pl neu">${svg(IC.lock,'#444E4E',11)} ${esc(c.nome)}</span>`).join('')}</div>
+    ${oc?`<div class="hint">${oc} coluna(s) ocultas não aparecem no formulário.</div>`:''}</div>
+  <div class="al neu">${svg(IC.info,'#444E4E',16)}<span>A configuração fica salva dentro deste arquivo. No Excel instalado, salve o arquivo depois para guardar.</span></div>`;
+  const f=`<div class="row"><button type="button" class="btn b-sec f1" onclick="S.view='cam';topNext=true;render()">Voltar</button><button type="button" class="btn b-pri f2" onclick="salvarConfig()">${svg(IC.save,'#fff',16)} Salvar e abrir formulário</button></div>`;
+  return {b,f,ov:''};
+}
+
+function campo(f){
+  const v=valorAtual(f),ch=f.idx in S.draft,er=S.est==='erro'?S.err[f.idx]:'';
+  const cls=`in${er?' err':''}${ch?' chg':''}`,id='f_'+f.idx,h=`oninput="ed(${f.idx},this.value,this)"`;
+  let ctl;
+  if(f.tipo==='lista'){
+    const ops=opcoes(f,S.src);if(v&&!ops.includes(v))ops.push(v);
+    ctl=`<select id="${id}" class="${cls}" onchange="ed(${f.idx},this.value,this)"><option value="">Selecione</option>${ops.map(o=>`<option ${o===v?'selected':''}>${esc(o)}</option>`).join('')}</select>`;
+  }else if(f.tipo==='data') ctl=`<input id="${id}" type="date" class="${cls}" value="${esc(v)}" ${h}>`;
+  else if(f.tipo==='numero') ctl=`<input id="${id}" type="text" inputmode="decimal" class="${cls}" value="${esc(v)}" ${h}>`;
+  else if(f.tipo==='longo') ctl=`<textarea id="${id}" class="${cls}" ${h}>${esc(v)}</textarea>`;
+  else if(f.tipo==='simnao') ctl=`<div class="seg">${['Sim','Não'].map(o=>`<button type="button" aria-pressed="${v===o}" onclick="edR(${f.idx},'${o}')">${o}</button>`).join('')}</div>`;
+  else ctl=`<input id="${id}" class="${cls}" value="${esc(v)}" ${h}>`;
+  const meia=f.tipo==='numero'||f.tipo==='data'||(f.tipo==='lista'&&opcoes(f,S.src).length<=3);
+  return `<div class="${meia?'':'full'}"><label class="lb" for="${id}">${esc(f.nome)}${f.obrig?' *':''}</label>${ctl}${er?`<div class="emsg">${er}</div>`:''}</div>`;
+}
+function fstTxt(){const n=Object.keys(S.draft).length;return n?`<span class="pl atn">${n} ${n>1?'alterações não salvas':'alteração não salva'}</span>`:`<span class="pl pos">${svg(IC.check,'#00605D',12)} Sem alterações pendentes</span>`;}
+function updFoot(){const e=document.getElementById('fst');if(e)e.innerHTML=fstTxt();const n=Object.keys(S.draft).length;['bsave','bdesc'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=!n;});}
+function vForm(){
+  if(S.est==='semfonte'||!S.src){
+    const b=`<div class="p-bc">Formulário</div><div class="sc"><div class="empty">${svg(IC.alert,'#B3261E',40)}<h3>Não consegui ler a fonte de dados</h3><p>${esc(S.erroFonte||'A tabela pode ter sido renomeada ou excluída.')}</p></div></div>`;
+    const f=`<button type="button" class="btn b-pri w100" onclick="go('fon')">Revisar a fonte de dados</button><button type="button" class="btn b-out w100" onclick="S.est='normal';abrirForm()">Tentar de novo</button>`;
+    return {b,f,ov:''};
+  }
+  if(!S.src.rowCount){
+    return {b:`<div class="p-bc">Formulário</div><div class="sc"><div class="empty">${svg(IC.table,'#047E7D',40)}<h3>A tabela está vazia</h3><p>Inclua linhas na planilha e toque em atualizar.</p></div></div>`,
+            f:`<button type="button" class="btn b-pri w100" onclick="recarregar()">${svg(IC.refresh,'#fff',16)} Atualizar dados</button>`,ov:''};
+  }
+  const ki=kIdx(),n=Object.keys(S.draft).length,chave=S.src.texts[S.sel][ki];
+  let b=`<div class="p-bc">Formulário</div>
+  <div class="srch">${svg(IC.search,'#5F6B6B',16)}<input class="in" aria-label="Buscar registro" placeholder="Buscar por ${esc(S.cfg.chave)} ou outra informação" onchange="buscar(this.value)"></div>
+  ${S.buscaMsg?`<div class="emsg">${esc(S.buscaMsg)}</div>`:''}
+  <div class="nav"><button type="button" class="ib" aria-label="Registro anterior" onclick="trocar(${S.sel-1})" ${S.sel?'':'disabled'}>${svg(IC.chevL,'#033E3D',18)}</button>
+  <div class="rec"><b>${esc(chave)}</b>Registro ${S.sel+1} de ${S.src.rowCount} · linha ${linhaExcel(S.sel)}</div>
+  <button type="button" class="ib" aria-label="Próximo registro" onclick="trocar(${S.sel+1})" ${S.sel<S.src.rowCount-1?'':'disabled'}>${svg(IC.chevR,'#033E3D',18)}</button></div>
+  <div class="hint" style="text-align:center;margin:6px 0 12px">Ou clique numa linha da planilha para abrir o registro.</div>`;
+  if(S.est==='salvo') b+=`<div class="al pos">${svg(IC.check,'#00605D',16)}<span><b>Linha ${S.linhaSalva} atualizada às ${S.horaSalva}.</b> ${S.gravados} ${S.gravados>1?'campos gravados':'campo gravado'} na tabela.</span></div>`;
+  if(S.est==='erro') b+=`<div class="al neg">${svg(IC.alert,'#B3261E',16)}<span>Corrija os campos destacados para salvar.</span></div>`;
+  if(S.est==='conflito') b+=`<div class="al atn">${svg(IC.alert,'#7A5700',16)}<div><b>Este registro mudou depois que você abriu.</b><br>Campos alterados por outra pessoa ou direto na planilha: ${S.conflito.map(i=>esc(S.campos[i].nome)).join(', ')}.<div class="row"><button type="button" class="btn b-sec" onclick="recarregar()">Recarregar registro</button><button type="button" class="btn b-gold" onclick="salvar(true)">Gravar mesmo assim</button></div></div></div>`;
+  const le=leitura();
+  b+=`<div class="sc"><h3>Informações do registro <span class="pl neu">${svg(IC.lock,'#444E4E',11)} Somente leitura</span></h3><div class="kv">${le.map(c=>{const t=S.src.texts[S.sel][c.idx];return `<div class="${String(t).length>18?'full':''}"><small>${esc(c.nome)}${c.formula?'<span class="fx">fx</span>':''}</small><span>${esc(t)||'·'}</span></div>`;}).join('')}</div></div>`;
+  const ed=editaveis();
+  b+=ed.length?`<div class="sc"><h3>Atualizar registro</h3><div class="shint">Campos com * são obrigatórios.</div><div class="fg">${ed.map(campo).join('')}</div></div>`
+    :`<div class="al neu">${svg(IC.info,'#444E4E',16)}<span>Nenhuma coluna está configurada para edição.</span></div>`;
+  const f=`<div class="fst" id="fst">${fstTxt()}</div><div class="row"><button type="button" id="bdesc" class="btn b-sec f1" onclick="descartar()" ${n?'':'disabled'}>Descartar</button><button type="button" id="bsave" class="btn b-pri f2" onclick="salvar()" ${n?'':'disabled'}>${svg(IC.save,'#fff',16)} Salvar na linha ${linhaExcel(S.sel)}</button></div>`;
+  let ov='';
+  if(S.est==='trocar'&&S.pend!=null) ov=`<div class="ov ctr"><div class="cfm" role="dialog" aria-label="Trocar de registro sem salvar?"><span class="cfi">${svg(IC.alert,'#7A5700',24)}</span><h3>Trocar de registro sem salvar?</h3><p>As <b>${n} ${n>1?'alterações':'alteração'}</b> em <b>${esc(chave)}</b> serão perdidas. Isso não pode ser desfeito.</p><div class="row"><button type="button" class="btn b-sec f1" onclick="contEdit()">Continuar editando</button><button type="button" class="btn b-neg f1" onclick="descTrocar()">Descartar e trocar</button></div></div></div>`;
+  return {b,f,ov};
+}
+const VIEWS={ini:vInicio,fon:vFonte,cam:vCampos,rev:vRevisar,frm:vForm};
+
+function render(){
+  const app=document.getElementById('app'),pb=document.getElementById('pb');
+  if(pb&&lastView===S.view&&!topNext) scrollTop=pb.scrollTop; else scrollTop=0;
+  let v;try{v=VIEWS[S.view]();}catch(e){v={b:`<div class="al neg">${esc(erroTxt(e))}</div>`,f:'',ov:''};}
+  const acoes=S.view==='frm'?`<button type="button" class="hb" title="Atualizar dados" aria-label="Atualizar dados" onclick="recarregar()">${svg(IC.refresh,'#fff',18)}</button>`:'';
+  const home=S.view!=='ini'?`<button type="button" class="hb" title="Início" aria-label="Início" onclick="go('ini')">${svg(IC.home,'#fff',18)}</button>`:'';
+  app.innerHTML=`<div class="p-hd"><span class="logo">logo_vale_branca</span><span class="dv"></span><b>Forms Dimensionador</b>${acoes}${home}</div><div class="p-strip"></div>
+  <div class="p-body" id="pb">${S.erro?`<div class="al neg">${svg(IC.alert,'#B3261E',16)}<span>${esc(S.erro)}</span></div>`:''}${v.b}<div class="ver">Versão ${VERSAO}</div></div>${v.f?`<div class="p-ft">${v.f}</div>`:''}${v.ov}
+  ${S.loading?`<div class="load"><div class="spin"></div>${esc(S.loading)}</div>`:''}`;
+  const pb2=document.getElementById('pb');if(pb2)pb2.scrollTop=scrollTop;
+  lastView=S.view;topNext=false;
+}
+
+/* ===== início ===== */
+Office.onReady(async info=>{
+  if(info.host!==Office.HostType.Excel){document.getElementById('app').innerHTML='<div class="p-body"><div class="al neu">Abra este painel pelo Excel.</div></div>';return;}
+  S.cfg=lerCfg();
+  render();
+  try{await Excel.run(async ctx=>{ctx.workbook.worksheets.onSelectionChanged.add(aoSelecionar);await ctx.sync();});}catch(e){}
+});
 </script>
 </body>
 </html>
